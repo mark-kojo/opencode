@@ -232,8 +232,11 @@ const layer = Layer.effect(
           model: loaded.model,
           tools: loaded.tools,
           system: transcript.system,
+          // The step-limit instruction goes as a user message: as an assistant one it is a prefill, which newer
+          // Anthropic models refuse ("This model does not support assistant message prefill. The conversation must
+          // end with a user message"), so the last step of an agent that reached its limit failed instead of summing up.
           messages: stepLimitReached
-            ? [...transcript.messages, Message.assistant(MAX_STEPS_PROMPT)]
+            ? [...transcript.messages, Message.user(MAX_STEPS_PROMPT)]
             : transcript.messages,
           // Keep tool definitions on the final Step to preserve the provider's cached prefix.
           toolChoice: stepLimitReached ? "none" : undefined,
