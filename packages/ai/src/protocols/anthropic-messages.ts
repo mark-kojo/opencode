@@ -255,6 +255,8 @@ const AnthropicTool = Schema.Struct({
   description: Schema.String,
   input_schema: JsonObject,
   cache_control: Schema.optional(AnthropicCacheControl),
+  // a tool's input streamed as it is written, not held back till the call is whole
+  eager_input_streaming: Schema.optional(Schema.Boolean),
 })
 type AnthropicTool = Schema.Schema.Type<typeof AnthropicTool>
 
@@ -549,6 +551,7 @@ const lowerTool = (breakpoints: Cache.Breakpoints, tool: ToolDefinition): Anthro
   description: tool.description,
   input_schema: tool.inputSchema,
   cache_control: cacheControl(breakpoints, tool.cache),
+  ...(process.env.OPENCODE_EAGER_TOOL_INPUT === "1" ? { eager_input_streaming: true } : {}),
 })
 
 const lowerToolChoice = (toolChoice: NonNullable<LLMRequest["toolChoice"]>) =>
