@@ -219,7 +219,10 @@ it.effect("ZAI Coding Chat sends PDFs from tool results as file parts", () =>
 
     expect(prepared.body.messages.at(-1)).toEqual({
       role: "user",
-      content: [{ type: "file", file: { filename: "report.pdf", file_data: "data:application/pdf;base64,JVBERi0=" } }],
+      content: [
+        { type: "text", text: "Attached media from tool result:" },
+        { type: "file", file: { filename: "report.pdf", file_data: "data:application/pdf;base64,JVBERi0=" } },
+      ],
     })
   }),
 )

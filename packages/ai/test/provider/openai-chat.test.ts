@@ -646,7 +646,10 @@ describe("OpenAI Chat route", () => {
         { role: "tool", tool_call_id: "call_image", content: "Image read successfully" },
         {
           role: "user",
-          content: [{ type: "image_url", image_url: { url: "data:image/png;base64,AAECAw==" } }],
+          content: [
+            { type: "text", text: "Attached media from tool result:" },
+            { type: "image_url", image_url: { url: "data:image/png;base64,AAECAw==" } },
+          ],
         },
       ])
       expect(JSON.stringify(prepared.body.messages)).not.toContain('"content":"AAECAw=="')
@@ -719,6 +722,7 @@ describe("OpenAI Chat route", () => {
         {
           role: "user",
           content: [
+            { type: "text", text: "Attached media from tool result:" },
             { type: "image_url", image_url: { url: "data:image/png;base64,AAEC" } },
             { type: "image_url", image_url: { url: "data:image/jpeg;base64,/9j/" } },
           ],
@@ -759,6 +763,7 @@ describe("OpenAI Chat route", () => {
         {
           role: "user",
           content: [
+            { type: "text", text: "Attached media from tool result:" },
             { type: "image_url", image_url: { url: "data:image/png;base64,AAEC" } },
             { type: "image_url", image_url: { url: "data:image/webp;base64,UklG" } },
             { type: "text", text: "<system-update>\nInspect both images.\n</system-update>" },
@@ -861,7 +866,10 @@ describe("OpenAI Chat route", () => {
       })
       expect(prepared.body.messages.at(-1)).toEqual({
         role: "user",
-        content: [{ type: "image_url", image_url: { url } }],
+        content: [
+          { type: "text", text: "Attached media from tool result:" },
+          { type: "image_url", image_url: { url } },
+        ],
       })
     }),
   )
@@ -938,6 +946,7 @@ describe("OpenAI Chat route", () => {
       expect(prepared.body.messages.at(-1)).toEqual({
         role: "user",
         content: [
+          { type: "text", text: "Attached media from tool result:" },
           { type: "file", file: { filename: "report.pdf", file_data: "data:application/pdf;base64,JVBERi0=" } },
         ],
       })

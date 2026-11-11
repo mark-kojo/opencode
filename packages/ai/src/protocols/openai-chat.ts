@@ -596,10 +596,15 @@ const lowerMessages = Effect.fnUntraced(function* (request: LLMRequest, options:
       messages.push({ role: "assistant", content: "Done." })
   }
   const pendingAttachments: OpenAIChatUserContent[] = []
+  // Label media moved out of tool results so the model does not read it as the user's own upload.
+  const takeAttachments = (): OpenAIChatUserContent[] => [
+    { type: "text", text: "Attached media from tool result:" },
+    ...pendingAttachments.splice(0),
+  ]
   const flushAttachments = () => {
     if (pendingAttachments.length === 0) return
     bridgeTools()
-    messages.push({ role: "user", content: pendingAttachments.splice(0) })
+    messages.push({ role: "user", content: takeAttachments() })
   }
   for (const message of request.messages) {
     if (message.role === "user") bridgeTools()
@@ -610,7 +615,7 @@ const lowerMessages = Effect.fnUntraced(function* (request: LLMRequest, options:
         messages.push({
           role: "user",
           content: [
-            ...pendingAttachments.splice(0),
+            ...takeAttachments(),
             { type: "text", text: part.text, cache_control: cacheControl },
           ],
         })
